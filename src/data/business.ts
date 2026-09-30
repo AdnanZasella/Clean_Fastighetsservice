@@ -25,8 +25,6 @@ export const business = {
   ],
   openingHoursText: 'Mån–fre 07–18',
   responseTime: 'inom 24 timmar',
-  // Förtroendepunkter. TODO: bekräfta F-skatt och försäkring med ägaren
-  trust: ['Godkänd för F-skatt', 'Ansvarsförsäkrade', 'RUT-avdrag direkt på fakturan', 'Fast pris i offerten'],
 } as const;
 
 export const primaryPhone = business.phones[0];

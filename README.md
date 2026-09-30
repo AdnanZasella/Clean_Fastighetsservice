@@ -31,21 +31,6 @@ npm run preview  # förhandsvisa bygget
 4. Koppla egen domän och uppdatera `site` i `astro.config.mjs` + `public/robots.txt`.
 5. Skicka ett testformulär och kontrollera att mejlet kommer fram.
 
-## Viktigast för att synas på Google (utanför koden)
+## Vad återstår?
 
-- **Google Företagsprofil** för Trollhättan – exakt samma namn, telefon och adress som på sajten. Detta väger tyngst för lokala sökningar ("städfirma Trollhättan").
-- Be nöjda kunder lämna **Google-recensioner**.
-- Registrera sajten i **Google Search Console** och skicka in `sitemap-index.xml`.
-- Samma uppgifter på Hitta.se, Eniro, Facebook m.fl.
-
-## Behövs från ägaren (markerat `TODO` i koden)
-
-- Org.nr och adress (även för Google Företagsprofil)
-- Öppettider
-- Bekräfta F-skatt och att de kommer tillbaka och åtgärdar anmärkningar vid flyttstäd (används i texterna)
-- Gör de byggjobb (renovering, reparation)? Då gäller **ROT**-avdrag för de jobben, inte RUT.
-- Exakt vilka fastighets-/byggtjänster som erbjuds (`fastighetsservice` i `services.ts`)
-- Får vi nämna hyresvärdar/kunder vid namn? Omdömen från kunder?
-- Egna foton på personal/utfört arbete
-- Önskad domän
-- Ägarens egen historia till Om oss-sidan
+Se [NASTA-STEG.md](NASTA-STEG.md): uppgifter från ägaren, domän, driftsättning och vad som är viktigast för Google.

@@ -36,9 +36,9 @@ export const services: Service[] = [
     icon: 'box',
     audience: 'bada',
     rut: true,
-    title: 'Flyttstäd i Trollhättan – fast pris med RUT-avdrag',
+    title: 'Flyttstäd i Trollhättan – noggrant och med RUT-avdrag',
     description:
-      'Flyttstädning i Trollhättan, Grästorp, Lysekil och Smögen. Fast pris, RUT-avdrag och noggrann städning som klarar besiktningen. Få gratis offert.',
+      'Flyttstädning i Trollhättan, Grästorp, Lysekil och Smögen. RUT-avdrag och noggrann städning som klarar besiktningen. Få gratis offert.',
     h1: 'Flyttstäd i Trollhättan',
     // TODO: bekräfta att ägaren erbjuder omstädning vid anmärkning
     intro:
@@ -54,7 +54,7 @@ export const services: Service[] = [
     faq: [
       {
         q: 'Vad kostar flyttstäd?',
-        a: 'Det beror mest på bostadens storlek och skick. Du får ett fast pris i offerten, och som privatperson betalar du bara halva arbetskostnaden tack vare RUT-avdraget.',
+        a: 'Det beror på bostadens storlek och skick. Oftast kommer vi ut och tittar först, så att du får ett pris som stämmer innan vi börjar. Som privatperson betalar du bara halva arbetskostnaden tack vare RUT-avdraget.',
       },
       {
         q: 'Behöver jag vara hemma?',
@@ -108,7 +108,7 @@ export const services: Service[] = [
     rut: true,
     title: 'Storstäd i Trollhättan – grundlig städning med RUT',
     description:
-      'Storstädning i Trollhättan, Grästorp, Lysekil och Smögen. Vi tar även det vanlig städning missar. RUT-avdrag och fast pris. Få gratis offert.',
+      'Storstädning i Trollhättan, Grästorp, Lysekil och Smögen. Vi tar även det vanlig städning missar. RUT-avdrag och gratis offert.',
     h1: 'Storstäd i Trollhättan',
     intro:
       'Vi städar hela bostaden grundligt, även bakom möbler, ovanpå skåp och inuti vitvaror. Passar inför högtider, efter renovering eller i fritidshuset inför säsongen.',
@@ -174,7 +174,7 @@ export const services: Service[] = [
     rut: false,
     title: 'Kontorsstäd i Trollhättan – städavtal för företag',
     description:
-      'Kontorsstädning i Trollhättan med omnejd. Flexibla städavtal, fast pris och en kontaktperson. Begär offert för ert kontor eller er lokal.',
+      'Kontorsstädning i Trollhättan med omnejd. Flexibla städavtal och en kontaktperson. Begär offert för ert kontor eller er lokal.',
     h1: 'Kontorsstäd i Trollhättan',
     intro: 'Vi städar kontor, butiker och lokaler före, under eller efter arbetstid, efter ett schema som passar er.',
     includes: [

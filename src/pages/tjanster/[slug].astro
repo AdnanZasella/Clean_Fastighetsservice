@@ -47,7 +47,7 @@ const serviceSchema = {
       <div>
         <h1>{service.h1}</h1>
         <p class="shero__lead">{service.intro}</p>
-        <a class="btn btn--primary" href="#offert">Få fast pris <Icon name="arrow" /></a>
+        <a class="btn btn--primary" href="#offert">Få gratis offert <Icon name="arrow" /></a>
         <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
       </div>
       <Photo name={service.slug} priority class="shero__img" />
@@ -70,7 +70,7 @@ const serviceSchema = {
             </>
           ) : (
             <>
-              <strong>Pris:</strong> fast pris per uppdrag eller ett löpande avtal, efter vad som passar er.
+              <strong>Pris:</strong> per uppdrag eller som löpande avtal. Vi tittar på lokalerna först så att priset stämmer.
             </>
           )
         }
@@ -87,7 +87,7 @@ const serviceSchema = {
 
   <section class="section">
     <div class="container narrow reveal">
-      <h2>Få ett fast pris på {service.name.toLowerCase()}</h2>
+      <h2>Offert på {service.name.toLowerCase()}</h2>
       <p class="muted">Kostnadsfritt, och du får svar inom 24 timmar.</p>
       <QuoteForm preselect={service.slug} />
     </div>
