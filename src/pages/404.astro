@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<BaseLayout title="Sidan hittades inte" description="Sidan du letade efter finns inte." noindex>
+  <section class="section">
+    <div class="container" style="max-width:640px;text-align:center">
+      <h1>Sidan hittades inte</h1>
+      <p>Sidan kan ha flyttats. Här är några vägar vidare:</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn--primary" href="/offert/">Få gratis offert <Icon name="arrow" /></a>
+        <a class="btn btn--ghost" href="/tjanster/">Se våra tjänster</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

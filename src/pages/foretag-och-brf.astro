@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import ServiceList from '../components/ServiceList.astro';
+import Faq from '../components/Faq.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { businessServices } from '../data/services';
+import { primaryPhone } from '../data/business';
+import { faqSchema } from '../data/schema';
+
+const faq = [
+  {
+    q: 'Kan ni städa lägenheter mellan hyresgäster?',
+    a: 'Ja, det gör vi regelbundet åt hyresvärdar i Trollhättan. Lägenheten blir klar i tid till nästa hyresgäst.',
+  },
+  {
+    q: 'Hur får vi ett pris?',
+    a: 'Skicka en förfrågan eller ring. Vi kommer gärna förbi och tittar på lokalerna, och återkommer sedan med ett fast pris.',
+  },
+];
+---
+
+<BaseLayout
+  title="Städning för företag, BRF & hyresvärdar i Trollhättan"
+  description="Kontorsstäd, trappstädning, städning mellan hyresgäster och fastighetsservice för företag, BRF och hyresvärdar i Trollhättan med omnejd."
+  schema={[faqSchema(faq)]}
+  breadcrumbs={[{ name: 'Företag & BRF', href: '/foretag-och-brf/' }]}
+>
+  <section class="section" style="padding-top:16px">
+    <div class="container intro">
+      <div>
+        <h1>Städning för företag, BRF och hyresvärdar</h1>
+        <p class="lead">
+          Vi arbetar redan med hyresvärdar i Trollhättan. Ni får ett fast schema, ett fast pris och en kontaktperson som ni kan ringa direkt.
+        </p>
+        <a class="btn btn--primary" href="#offert">Begär offert <Icon name="arrow" /></a>
+        <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
+      </div>
+      <Photo name="foretag" priority class="intro__img" />
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container reveal">
+      <h2>Det här hjälper vi till med</h2>
+      <ServiceList items={businessServices} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container narrow reveal">
+      <h2>Vanliga frågor</h2>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container narrow reveal">
+      <h2>Begär offert för ert företag</h2>
+      <p class="muted">Kostnadsfritt, och ni får svar inom 24 timmar.</p>
+      <QuoteForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 28px;
+  }
+  .intro h1 {
+    font-size: clamp(1.875rem, 8vw, 3rem);
+  }
+  .lead {
+    font-size: 1.125rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+    max-width: 580px;
+  }
+  .intro :global(.intro__img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+  .narrow {
+    max-width: 760px;
+  }
+  .muted {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  @media (min-width: 960px) {
+    .intro:has(.intro__img) {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 64px;
+    }
+  }
+</style>

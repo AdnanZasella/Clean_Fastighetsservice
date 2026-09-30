@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { business } from '../data/business';
+---
+
+<BaseLayout
+  title="Integritetspolicy"
+  description={`Så hanterar ${business.name} dina personuppgifter enligt GDPR.`}
+  breadcrumbs={[{ name: 'Integritetspolicy', href: '/integritetspolicy/' }]}
+>
+  <section class="section" style="padding-top:24px">
+    <div class="container prose">
+      <h1>Integritetspolicy</h1>
+      <p>
+        {business.name} är personuppgiftsansvarig för de uppgifter du lämnar till oss via hemsidan, telefon eller e-post. Vi behandlar dina uppgifter i enlighet med dataskyddsförordningen (GDPR).
+      </p>
+
+      <h2>Vilka uppgifter samlar vi in?</h2>
+      <p>När du skickar en offertförfrågan samlar vi in namn, telefonnummer, e-postadress, adress eller område samt den information du själv väljer att skriva i meddelandet.</p>
+
+      <h2>Varför behandlar vi uppgifterna?</h2>
+      <p>
+        Vi använder uppgifterna för att besvara din förfrågan, ta fram en offert och, om du blir kund, utföra och fakturera tjänsten. För RUT-avdrag behöver vi även ditt personnummer, som vi då lämnar till Skatteverket. Den rättsliga grunden är avtal, samt rättslig förpliktelse för bokföring och RUT.
+      </p>
+
+      <h2>Hur länge sparas uppgifterna?</h2>
+      <p>Förfrågningar som inte leder till uppdrag raderas inom 12 månader. Uppgifter som krävs för bokföring sparas i sju år enligt bokföringslagen.</p>
+
+      <h2>Vilka delar vi uppgifterna med?</h2>
+      <p>
+        Formuläret på hemsidan hanteras av vår webbleverantör Netlify, som lagrar uppgifterna för vår räkning. Vi säljer aldrig dina uppgifter och delar dem inte med andra, förutom med Skatteverket vid RUT-avdrag.
+      </p>
+
+      <h2>Cookies</h2>
+      <p>Hemsidan använder inga spårningscookies.</p>
+
+      <h2>Dina rättigheter</h2>
+      <p>
+        Du har rätt att begära utdrag, rättelse eller radering av dina uppgifter. Kontakta oss på <a href={`mailto:${business.email}`}>{business.email}</a>. Du kan också lämna klagomål till Integritetsskyddsmyndigheten (IMY).
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,482 @@
+---
+// Offertformulär via Netlify Forms. Utan JS visas alla fält på en gång;
+// med JS delas det upp i två korta steg för att sänka tröskeln på mobil.
+import Icon from './Icon.astro';
+import { services } from '../data/services';
+import { areas } from '../data/areas';
+import { primaryPhone } from '../data/business';
+
+interface Props {
+  preselect?: string; // tjänstens slug
+  area?: string; // ortens namn
+}
+const { preselect, area } = Astro.props;
+---
+
+<div class="qf" id="offert">
+  <ol class="qf__progress" aria-hidden="true" hidden>
+    <li class="is-active">Vad behöver du?</li>
+    <li>Dina uppgifter</li>
+  </ol>
+
+  <form name="offert" method="POST" action="/tack/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+    <input type="hidden" name="form-name" value="offert" />
+    <p class="visually-hidden">
+      <label>Fyll inte i detta fält: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
+
+    <fieldset class="qf__step" data-step="1">
+      <legend class="visually-hidden">Steg 1: Vad behöver du hjälp med?</legend>
+
+      <div class="field">
+        <span class="field__label" id="lbl-tjanst">Tjänst</span>
+        <div class="chips" role="radiogroup" aria-labelledby="lbl-tjanst">
+          {
+            services.map((s) => (
+              <label class="chip">
+                <input type="radio" name="tjanst" value={s.name} required checked={preselect === s.slug} data-slug={s.slug} />
+                <span>{s.chip ?? s.name}</span>
+              </label>
+            ))
+          }
+          <label class="chip">
+            <input type="radio" name="tjanst" value="Annat" required />
+            <span>Annat</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field__label" id="lbl-kund">Jag är</span>
+        <div class="segment" role="radiogroup" aria-labelledby="lbl-kund">
+          <label><input type="radio" name="kundtyp" value="Privatperson" checked /><span>Privatperson</span></label>
+          <label><input type="radio" name="kundtyp" value="Företag" /><span>Företag</span></label>
+          <label><input type="radio" name="kundtyp" value="BRF / Fastighetsägare" /><span>BRF</span></label>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label" for="qf-ort">Ort</label>
+          <select id="qf-ort" name="ort" required>
+            {areas.map((a) => <option value={a.name} selected={a.name === area}>{a.name}</option>)}
+            <option value="Annan ort">Annan ort</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="qf-kvm">Yta i kvm <small>(valfritt)</small></label>
+          <input id="qf-kvm" name="yta_kvm" type="text" inputmode="numeric" placeholder="t.ex. 75" />
+        </div>
+      </div>
+
+      <button type="button" class="btn btn--navy qf__next" hidden>Fortsätt <Icon name="arrow" /></button>
+    </fieldset>
+
+    <fieldset class="qf__step" data-step="2">
+      <legend class="visually-hidden">Steg 2: Dina kontaktuppgifter</legend>
+
+      <div class="field">
+        <label class="field__label" for="qf-namn">Namn</label>
+        <input id="qf-namn" name="namn" type="text" autocomplete="name" required />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label" for="qf-tel">Telefon</label>
+          <input id="qf-tel" name="telefon" type="tel" autocomplete="tel" inputmode="tel" required />
+        </div>
+        <div class="field">
+          <label class="field__label" for="qf-epost">E-post <small>(valfritt)</small></label>
+          <input id="qf-epost" name="epost" type="email" autocomplete="email" inputmode="email" />
+        </div>
+      </div>
+      <div class="field">
+        <label class="field__label" for="qf-msg">Meddelande <small>(valfritt)</small></label>
+        <textarea id="qf-msg" name="meddelande" rows="3" placeholder="Adress, önskat datum eller annat vi bör veta"></textarea>
+      </div>
+
+      <p class="qf__error" role="alert" hidden></p>
+
+      <div class="qf__actions">
+        <button type="button" class="btn btn--ghost qf__back" hidden>Tillbaka</button>
+        <button type="submit" class="btn btn--primary qf__submit">
+          <span class="qf__submit-label">Skicka förfrågan</span>
+          <span class="qf__spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="qf__legal">
+        Vi använder bara dina uppgifter för att svara dig. <a href="/integritetspolicy/">Integritetspolicy</a>
+      </p>
+    </fieldset>
+  </form>
+
+  <p class="qf__alt">
+    Hellre prata direkt? <a href={primaryPhone.href}>Ring {primaryPhone.display}</a>
+  </p>
+</div>
+
+<script>
+  const SUMMARY_KEY = 'offert-summary';
+
+  document.querySelectorAll<HTMLElement>('.qf').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const steps = [...root.querySelectorAll<HTMLElement>('.qf__step')];
+    const progress = root.querySelector<HTMLElement>('.qf__progress')!;
+    const next = root.querySelector<HTMLButtonElement>('.qf__next')!;
+    const back = root.querySelector<HTMLButtonElement>('.qf__back')!;
+    const submit = root.querySelector<HTMLButtonElement>('.qf__submit')!;
+    const error = root.querySelector<HTMLElement>('.qf__error')!;
+
+    // Förval från ?tjanst=<slug>
+    const slug = new URLSearchParams(location.search).get('tjanst');
+    if (slug) {
+      const match = form.querySelector<HTMLInputElement>(`input[data-slug="${CSS.escape(slug)}"]`);
+      if (match) match.checked = true;
+    }
+
+    const show = (i: number, focus = true) => {
+      steps.forEach((s, n) => {
+        s.hidden = n !== i;
+        s.classList.toggle('is-entering', n === i && focus);
+      });
+      progress.querySelectorAll('li').forEach((li, n) => li.classList.toggle('is-active', n <= i));
+      error.hidden = true;
+      if (focus) {
+        root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        steps[i].querySelector<HTMLElement>('input:not([type=radio])')?.focus({ preventScroll: true });
+      }
+    };
+
+    const validate = (step: HTMLElement) => {
+      const required = [...step.querySelectorAll<HTMLInputElement>('input[required], select[required]')];
+      const ok = required.every((f) => f.checkValidity());
+      step.querySelectorAll('.field').forEach((fieldEl) => {
+        const input = fieldEl.querySelector<HTMLInputElement>('[required]');
+        fieldEl.classList.toggle('is-invalid', !!input && !input.checkValidity());
+      });
+      if (!ok) {
+        error.textContent = step.dataset.step === '1' ? 'Välj en tjänst först.' : 'Fyll i namn och telefon så ringer vi upp.';
+        step.querySelector('.qf__actions, .qf__next')!.before(error);
+        error.hidden = false;
+        // Liten skakning på det som saknas
+        step.querySelectorAll('.is-invalid').forEach((el) => {
+          el.classList.remove('shake');
+          void (el as HTMLElement).offsetWidth;
+          el.classList.add('shake');
+        });
+      }
+      return ok;
+    };
+
+    // Aktivera stegläge
+    progress.hidden = false;
+    next.hidden = false;
+    back.hidden = false;
+    show(0, false);
+
+    next.addEventListener('click', () => validate(steps[0]) && show(1));
+    back.addEventListener('click', () => show(0));
+
+    // "Fortsätt" tänds först när en tjänst är vald
+    form.addEventListener('change', (e) => {
+      const target = e.target as HTMLInputElement;
+      target.closest('.field')?.classList.remove('is-invalid');
+      if (target.name === 'tjanst') next.classList.add('is-ready');
+    });
+    if (form.querySelector('input[name=tjanst]:checked')) next.classList.add('is-ready');
+
+    form.addEventListener('submit', (e) => {
+      if (!validate(steps[1])) {
+        e.preventDefault();
+        return;
+      }
+      // Spara ett kort sammandrag så att tacksidan kan bekräfta personligt
+      const data = new FormData(form);
+      try {
+        sessionStorage.setItem(
+          SUMMARY_KEY,
+          JSON.stringify({ namn: String(data.get('namn') || '').split(' ')[0], tjanst: data.get('tjanst'), ort: data.get('ort') }),
+        );
+      } catch {}
+      submit.classList.add('is-loading');
+      submit.setAttribute('aria-busy', 'true');
+    });
+  });
+</script>
+
+<style>
+  .qf {
+    min-width: 0;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    padding: 22px 18px;
+    box-shadow: var(--shadow);
+    color: var(--ink);
+    scroll-margin-top: calc(var(--header-h) + 12px);
+  }
+
+  .qf__progress {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 22px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .qf__progress li {
+    padding-top: 8px;
+    border-top: 3px solid var(--line);
+    transition:
+      border-color 0.35s var(--ease),
+      color 0.35s ease;
+  }
+  .qf__progress li.is-active {
+    border-color: var(--yellow);
+    color: var(--navy-900);
+  }
+
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  fieldset + fieldset {
+    margin-top: 20px;
+  }
+  /* Mjuk övergång mellan stegen */
+  .is-entering {
+    animation: step-in 0.35s var(--ease);
+  }
+  @keyframes step-in {
+    from {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+  }
+
+  .field {
+    display: grid;
+    gap: 6px;
+  }
+  .field-row {
+    display: grid;
+    gap: 20px;
+  }
+  .field__label {
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--navy-900);
+  }
+  .field__label small {
+    font-weight: 500;
+    color: var(--muted);
+  }
+  input[type='text'],
+  input[type='tel'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    font: inherit;
+    font-size: 16px; /* förhindrar zoom i iOS */
+    color: var(--ink);
+    appearance: none;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%231b3a6b' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 44px;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--navy-600);
+    box-shadow: 0 0 0 4px var(--navy-100);
+  }
+  .is-invalid input,
+  .is-invalid select,
+  .is-invalid .chip span {
+    border-color: #c62828;
+  }
+  .shake {
+    animation: shake 0.35s ease;
+  }
+  @keyframes shake {
+    25% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip input,
+  .segment input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s var(--ease);
+  }
+  .chip span:hover {
+    border-color: var(--navy-600);
+  }
+  .chip input:checked + span {
+    border-color: var(--navy-700);
+    background: var(--navy-700);
+    color: #fff;
+    animation: pop 0.3s var(--ease);
+  }
+  @keyframes pop {
+    50% {
+      transform: scale(1.06);
+    }
+  }
+  .chip input:focus-visible + span,
+  .segment input:focus-visible + span {
+    outline: 3px solid var(--yellow);
+    outline-offset: 2px;
+  }
+
+  .segment {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 4px;
+    gap: 4px;
+    background: var(--bg-soft);
+    border-radius: var(--radius-sm);
+  }
+  .segment span {
+    display: grid;
+    place-items: center;
+    min-height: 42px;
+    padding: 6px 4px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .segment input:checked + span {
+    background: #fff;
+    color: var(--navy-900);
+    box-shadow: 0 1px 3px rgb(13 33 68 / 0.12);
+  }
+
+  /* "Fortsätt" är lugn tills en tjänst är vald, sedan tänds den */
+  .qf__next:not(.is-ready) {
+    background: var(--navy-100);
+    color: var(--navy-700);
+  }
+
+  .qf__error {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: #fdecea;
+    color: #8e1c1c;
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+  .qf__actions {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .qf__submit {
+    position: relative;
+  }
+  .qf__spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgb(13 33 68 / 0.25);
+    border-top-color: var(--navy-900);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .qf__submit.is-loading {
+    pointer-events: none;
+  }
+  .qf__submit.is-loading .qf__submit-label {
+    opacity: 0.6;
+  }
+  .qf__submit.is-loading .qf__spinner {
+    display: inline-block;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .qf__legal {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .qf__alt {
+    margin: 20px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .qf__alt a {
+    font-weight: 700;
+  }
+
+  @media (min-width: 640px) {
+    .qf {
+      padding: 36px;
+    }
+    .field-row {
+      grid-template-columns: 1fr 1fr;
+    }
+    .qf__actions {
+      flex-direction: row;
+    }
+    .qf__actions .qf__submit {
+      flex: 1;
+    }
+  }
+</style>

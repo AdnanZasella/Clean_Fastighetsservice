@@ -1,0 +1,48 @@
+---
+// Tre korta skäl att välja oss. Medvetet utan ikoner och kort – bara text.
+const items = [
+  { title: 'Fast pris', text: 'Du vet vad det kostar innan vi börjar.' },
+  { title: 'RUT-avdrag direkt', text: 'Du betalar halva arbetskostnaden. Vi sköter pappersarbetet.' },
+  { title: 'Lokalt i Trollhättan', text: 'Du pratar direkt med oss som gör jobbet.' },
+];
+---
+
+<ul class="why">
+  {
+    items.map((i) => (
+      <li>
+        <strong>{i.title}</strong>
+        <span>{i.text}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .why {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .why li {
+    padding-left: 16px;
+    border-left: 3px solid var(--yellow);
+  }
+  .why strong {
+    display: block;
+    font-size: 1.0625rem;
+    color: var(--navy-900);
+  }
+  .why span {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+  @media (min-width: 760px) {
+    .why {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+  }
+</style>

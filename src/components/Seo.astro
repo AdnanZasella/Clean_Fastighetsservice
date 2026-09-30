@@ -1,0 +1,72 @@
+---
+import { business } from '../data/business';
+import { areas } from '../data/areas';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  schema?: Record<string, unknown>[];
+}
+
+const { title, description, noindex = false, schema = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.png', Astro.site);
+// Varumärkessuffix bara om det ryms (Google klipper runt 60 tecken)
+const fullTitle = title.includes('E&I') || title.length > 44 ? title : `${title} | E&I Service`;
+
+// LocalBusiness finns på alla sidor, så Google kopplar ihop sajten med företaget.
+const siteUrl = Astro.site!.toString();
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': ['LocalBusiness', 'HouseCleaningService'],
+  '@id': `${siteUrl}#business`,
+  name: business.name,
+  alternateName: business.shortName,
+  url: siteUrl,
+  telephone: business.phones.map((p) => p.href.replace('tel:', '')),
+  email: business.email,
+  image: ogImage.toString(),
+  priceRange: '$$',
+  address: {
+    '@type': 'PostalAddress',
+    ...(business.address.street && { streetAddress: business.address.street }),
+    ...(business.address.postalCode && { postalCode: business.address.postalCode }),
+    addressLocality: business.address.city,
+    addressRegion: business.address.region,
+    addressCountry: business.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: business.geo.lat, longitude: business.geo.lng },
+  areaServed: areas.map((a) => ({ '@type': 'City', name: a.name })),
+  openingHoursSpecification: business.openingHours.map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: h.days,
+    opens: h.opens,
+    closes: h.closes,
+  })),
+  ...(business.orgNumber && { vatID: business.orgNumber }),
+};
+
+const allSchema = [localBusiness, ...schema];
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, follow" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="sv_SE" />
+<meta property="og:site_name" content={business.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<meta name="geo.region" content="SE-O" />
+<meta name="geo.placename" content={business.address.city} />
+
+{allSchema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}

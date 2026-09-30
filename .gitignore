@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.netlify/
+
+# Råmaterial i rotmappen (affisch, oanvända bilder) – används inte av sidan
+/*.jpg
+/*.jpeg
+/*.png
+/*.pdf

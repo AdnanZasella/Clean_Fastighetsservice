@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Photo from '../components/Photo.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { business } from '../data/business';
+// TODO: ersätt texten med ägarens egen historia (när företaget startade, vilka E och I är, antal anställda).
+---
+
+<BaseLayout
+  title="Om oss – lokal städfirma i Trollhättan"
+  description={`${business.name} är en lokal städ- och fastighetsservicefirma i Trollhättan som hjälper hem, företag och hyresvärdar.`}
+  breadcrumbs={[{ name: 'Om oss', href: '/om-oss/' }]}
+>
+  <section class="section" style="padding-top:16px">
+    <div class="container prose">
+      <h1>Om oss</h1>
+      <p class="lead">
+        Vi är en lokal städfirma med bas i Trollhättan. Vi städar hem, kontor och fastigheter i Trollhättan, Grästorp, Lysekil och Smögen.
+      </p>
+      <p>
+        Vi är ett litet företag. När du ringer pratar du med oss som gör jobbet, och vi tar ansvar för varje uppdrag från offert till färdigt resultat. Flera hyresvärdar i Trollhättan anlitar oss redan för trapphus och lägenheter.
+      </p>
+      <Photo name="om-oss" alt="Vi på E&I" class="about__img" />
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container">
+      <TrustBar />
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .lead {
+    font-size: 1.1875rem;
+  }
+  .prose p:not(.lead) {
+    color: var(--muted);
+  }
+  .prose :global(.about__img) {
+    width: 100%;
+    height: auto;
+    margin-top: 32px;
+    border-radius: var(--radius-lg);
+  }
+</style>

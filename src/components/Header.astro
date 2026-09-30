@@ -1,0 +1,227 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { primaryPhone } from '../data/business';
+import { coreServices } from '../data/services';
+
+const nav = [
+  { href: '/tjanster/', label: 'Tjänster' },
+  { href: '/foretag-och-brf/', label: 'Företag & BRF' },
+  { href: '/omraden/', label: 'Områden' },
+  { href: '/om-oss/', label: 'Om oss' },
+  { href: '/kontakt/', label: 'Kontakt' },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string) => path.startsWith(href);
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <Logo />
+
+    <nav class="header__nav" aria-label="Huvudmeny">
+      {nav.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="header__actions">
+      <a class="header__phone" href={primaryPhone.href} aria-label={`Ring ${primaryPhone.display}`}>
+        <Icon name="phone" size={18} />
+        <span>{primaryPhone.display}</span>
+      </a>
+      <a class="btn btn--primary header__cta" href="/offert/">Få offert</a>
+      <button class="header__toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Öppna meny">
+        <Icon name="menu" size={26} class="icon-open" />
+        <Icon name="close" size={26} class="icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <nav class="container" aria-label="Mobilmeny">
+      <ul class="mobile-menu__services">
+        {coreServices.map((s) => (
+          <li><a href={`/tjanster/${s.slug}/`}>{s.name}</a></li>
+        ))}
+      </ul>
+      <ul class="mobile-menu__main">
+        {nav.slice(1).map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+      <a class="btn btn--primary" href="/offert/">Få gratis offert <Icon name="arrow" /></a>
+      <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.header__toggle');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Stäng meny' : 'Öppna meny');
+      menu.hidden = !open;
+      document.documentElement.classList.toggle('menu-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(menu.hidden));
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+    matchMedia('(min-width: 960px)').addEventListener('change', () => setOpen(false));
+  }
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+  }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: var(--header-h);
+  }
+  .header__nav {
+    display: none;
+  }
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .header__phone {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--navy-50);
+    color: var(--navy-700);
+    text-decoration: none;
+    font-weight: 800;
+  }
+  .header__phone span {
+    display: none;
+  }
+  .header__cta {
+    display: none;
+  }
+  .header__toggle {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--navy-900);
+    cursor: pointer;
+  }
+  .header__toggle :global(.icon-close),
+  .header__toggle[aria-expanded='true'] :global(.icon-open) {
+    display: none;
+  }
+  .header__toggle[aria-expanded='true'] :global(.icon-close) {
+    display: block;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    background: #fff;
+    overflow-y: auto;
+    padding-block: 20px calc(32px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--line);
+  }
+  :global(html.menu-open) {
+    overflow: hidden;
+  }
+  .mobile-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mobile-menu__services {
+    margin-bottom: 16px !important;
+  }
+  .mobile-menu__services a {
+    display: block;
+    padding: 10px 4px;
+    color: var(--navy-900);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+  .mobile-menu__main {
+    border-top: 1px solid var(--line);
+    padding-top: 8px !important;
+    margin-bottom: 28px !important;
+  }
+  .mobile-menu__main a {
+    display: block;
+    padding: 10px 4px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.0625rem;
+  }
+  /* Menyn glider in mjukt */
+  .mobile-menu:not([hidden]) {
+    animation: menu-in 0.25s var(--ease);
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .header__nav {
+      display: flex;
+      gap: 28px;
+    }
+    .header__nav a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9875rem;
+      padding-block: 6px;
+      border-bottom: 2px solid transparent;
+    }
+    .header__nav a:hover,
+    .header__nav a[aria-current='page'] {
+      color: var(--navy-700);
+      border-color: var(--yellow);
+    }
+    .header__actions {
+      gap: 16px;
+    }
+    .header__phone {
+      display: inline-flex;
+      gap: 8px;
+      width: auto;
+      height: auto;
+      background: none;
+    }
+    .header__phone span {
+      display: inline;
+    }
+    .header__cta {
+      display: inline-flex;
+      min-height: 46px;
+      padding: 10px 22px;
+      font-size: 1rem;
+    }
+    .header__toggle,
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>

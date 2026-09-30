@@ -1,0 +1,130 @@
+---
+// Slutet på kundens resa (Peak-End-regeln): personlig bekräftelse + tydligt nästa steg.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { primaryPhone, business } from '../data/business';
+---
+
+<BaseLayout title="Tack för din förfrågan" description="Vi har tagit emot din offertförfrågan och återkommer snart." noindex hideCallbar>
+  <section class="section">
+    <div class="container thanks">
+      <svg class="check" viewBox="0 0 52 52" aria-hidden="true">
+        <circle cx="26" cy="26" r="24" fill="none" stroke-width="3"></circle>
+        <path d="M15 27l7 7 15-16" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+
+      <h1 data-thanks-title>Tack!</h1>
+      <p class="lead" data-thanks-text>Vi har fått din förfrågan.</p>
+
+      <ol class="next">
+        <li><strong>Vi hör av oss {business.responseTime}</strong> per telefon eller mejl.</li>
+        <li><strong>Du får ett fast pris</strong>, med eventuellt RUT-avdrag redan avdraget.</li>
+        <li><strong>Vi bokar en tid</strong> som passar dig.</li>
+      </ol>
+
+      <p class="urgent">Brådskar det? <a href={primaryPhone.href}>Ring {primaryPhone.display}</a></p>
+      <a class="home" href="/">Tillbaka till startsidan</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  try {
+    const raw = sessionStorage.getItem('offert-summary');
+    if (raw) {
+      const s = JSON.parse(raw) as { namn?: string; tjanst?: string; ort?: string };
+      const title = document.querySelector('[data-thanks-title]');
+      const text = document.querySelector('[data-thanks-text]');
+      if (s.namn && title) title.textContent = `Tack, ${s.namn}!`;
+      if (s.tjanst && text) {
+        const what = s.tjanst === 'Annat' ? 'din förfrågan' : `din förfrågan om ${s.tjanst.toLowerCase()}`;
+        text.textContent = `Vi har fått ${what}${s.ort && s.ort !== 'Annan ort' ? ` i ${s.ort}` : ''}.`;
+      }
+      sessionStorage.removeItem('offert-summary');
+    }
+  } catch {}
+</script>
+
+<style>
+  .thanks {
+    max-width: 560px;
+  }
+  .check {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 24px;
+    stroke: var(--green);
+  }
+  .check circle {
+    stroke-dasharray: 151;
+    stroke-dashoffset: 151;
+    animation: draw 0.6s var(--ease) forwards;
+  }
+  .check path {
+    stroke-dasharray: 36;
+    stroke-dashoffset: 36;
+    animation: draw 0.4s var(--ease) 0.5s forwards;
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .check circle,
+    .check path {
+      stroke-dashoffset: 0;
+    }
+  }
+  .lead {
+    font-size: 1.1875rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .next {
+    list-style: none;
+    counter-reset: n;
+    margin: 0 0 32px;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .next li {
+    counter-increment: n;
+    position: relative;
+    padding-left: 44px;
+    color: var(--muted);
+  }
+  .next li::before {
+    content: counter(n);
+    position: absolute;
+    left: 0;
+    top: -2px;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--navy-50);
+    color: var(--navy-700);
+    font-weight: 800;
+    font-size: 0.9375rem;
+  }
+  .next strong {
+    color: var(--navy-900);
+  }
+  .urgent {
+    padding: 16px;
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    font-weight: 600;
+  }
+  .urgent a {
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .home {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--muted);
+  }
+</style>

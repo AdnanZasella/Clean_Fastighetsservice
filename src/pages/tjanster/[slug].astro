@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
+import Faq from '../../components/Faq.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import { services, type Service } from '../../data/services';
+import { areas } from '../../data/areas';
+import { primaryPhone } from '../../data/business';
+import { photos } from '../../data/photos';
+import { faqSchema } from '../../data/schema';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+interface Props {
+  service: Service;
+}
+const { service } = Astro.props;
+const others = services.filter((s) => s.slug !== service.slug);
+const hasPhoto = Boolean(photos[service.slug]);
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: `${service.name} i Trollhättan`,
+  serviceType: service.name,
+  description: service.description,
+  provider: { '@id': `${Astro.site}#business` },
+  areaServed: areas.map((a) => ({ '@type': 'City', name: a.name })),
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+};
+---
+
+<BaseLayout
+  title={service.title}
+  description={service.description}
+  schema={[serviceSchema, faqSchema(service.faq)]}
+  breadcrumbs={[
+    { name: 'Tjänster', href: '/tjanster/' },
+    { name: service.name, href: `/tjanster/${service.slug}/` },
+  ]}
+>
+  <section class="shero">
+    <div class:list={['container', 'shero__inner', { 'has-photo': hasPhoto }]}>
+      <div>
+        <h1>{service.h1}</h1>
+        <p class="shero__lead">{service.intro}</p>
+        <a class="btn btn--primary" href="#offert">Få fast pris <Icon name="arrow" /></a>
+        <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
+      </div>
+      <Photo name={service.slug} priority class="shero__img" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container detail reveal">
+      <div>
+        <h2>Det här ingår</h2>
+        <ul class="ticks">
+          {service.includes.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <p class="note">
+        {
+          service.rut ? (
+            <>
+              <strong>RUT-avdrag:</strong> som privatperson betalar du halva arbetskostnaden. Vi drar av det direkt på fakturan.
+            </>
+          ) : (
+            <>
+              <strong>Pris:</strong> fast pris per uppdrag eller ett löpande avtal, efter vad som passar er.
+            </>
+          )
+        }
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container narrow reveal">
+      <h2>Vanliga frågor</h2>
+      <Faq items={service.faq} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container narrow reveal">
+      <h2>Få ett fast pris på {service.name.toLowerCase()}</h2>
+      <p class="muted">Kostnadsfritt, och du får svar inom 24 timmar.</p>
+      <QuoteForm preselect={service.slug} />
+    </div>
+  </section>
+
+  <nav class="section section--soft others" aria-label="Andra tjänster">
+    <div class="container">
+      <p>Andra tjänster:</p>
+      <ul>
+        {others.map((s) => <li><a href={`/tjanster/${s.slug}/`}>{s.name}</a></li>)}
+      </ul>
+    </div>
+  </nav>
+</BaseLayout>
+
+<style>
+  .shero {
+    padding-block: 16px 8px;
+  }
+  .shero__inner {
+    display: grid;
+    gap: 28px;
+  }
+  .shero h1 {
+    font-size: clamp(1.875rem, 8vw, 3rem);
+  }
+  .shero__lead {
+    font-size: 1.125rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+    max-width: 560px;
+  }
+  .shero :global(.shero__img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+
+  .detail {
+    display: grid;
+    gap: 28px;
+  }
+  .note {
+    margin: 0;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    align-self: start;
+  }
+  .narrow {
+    max-width: 760px;
+  }
+  .muted {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .others {
+    padding-block: 32px;
+  }
+  .others p {
+    margin: 0 0 8px;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+  .others ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+  }
+  .others a {
+    display: inline-block;
+    padding-block: 8px;
+    font-weight: 600;
+  }
+
+  @media (min-width: 960px) {
+    .shero {
+      padding-block: 32px 16px;
+    }
+    .shero__inner.has-photo {
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 64px;
+    }
+    .detail {
+      grid-template-columns: 1.4fr 1fr;
+      gap: 64px;
+    }
+  }
+</style>

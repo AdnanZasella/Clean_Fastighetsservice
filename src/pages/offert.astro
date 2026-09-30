@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+---
+
+<BaseLayout
+  title="Gratis offert på städning – svar inom 24 h"
+  description="Begär en kostnadsfri offert på flyttstäd, hemstäd, storstäd, fönsterputsning, kontorsstäd eller fastighetsservice i Trollhättan med omnejd."
+  breadcrumbs={[{ name: 'Offert', href: '/offert/' }]}
+  hideCallbar
+>
+  <section class="section offert">
+    <div class="container">
+      <h1>Få ett fast pris</h1>
+      <p class="lead">Det tar under en minut. Kostnadsfritt, och du får svar inom 24 timmar.</p>
+      <QuoteForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .offert {
+    padding-top: 16px;
+  }
+  .offert .container {
+    max-width: 760px;
+  }
+  .offert h1 {
+    font-size: clamp(1.875rem, 8vw, 2.75rem);
+  }
+  .lead {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+</style>

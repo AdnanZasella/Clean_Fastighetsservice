@@ -1,0 +1,91 @@
+---
+import Icon from './Icon.astro';
+import type { Service } from '../data/services';
+
+interface Props {
+  items: Service[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="slist">
+  {
+    items.map((s) => (
+      <li>
+        <a href={`/tjanster/${s.slug}/`}>
+          <span class="slist__body">
+            <strong>{s.name}</strong>
+            <span>{s.short}</span>
+          </span>
+          <Icon name="arrow" size={20} class="slist__arrow" />
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .slist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .slist li {
+    border-bottom: 1px solid var(--line);
+  }
+  .slist a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 4px;
+    color: var(--ink);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease;
+  }
+  .slist a:active {
+    background: var(--bg-soft);
+  }
+  .slist__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .slist strong {
+    font-size: 1.125rem;
+    color: var(--navy-900);
+  }
+  .slist__body span {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+  .slist :global(.slist__arrow) {
+    flex: none;
+    color: var(--navy-600);
+    transition: transform 0.2s var(--ease);
+  }
+  .slist a:hover :global(.slist__arrow) {
+    transform: translateX(4px);
+  }
+  .slist a:hover strong {
+    color: var(--navy-600);
+  }
+
+  @media (min-width: 960px) {
+    .slist {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 48px;
+      border-top: 0;
+    }
+    .slist li:nth-child(-n + 2) {
+      border-top: 1px solid var(--line);
+    }
+    .slist a {
+      padding: 22px 4px;
+    }
+  }
+</style>

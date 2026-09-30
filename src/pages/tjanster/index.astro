@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceList from '../../components/ServiceList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { coreServices, extraServices } from '../../data/services';
+---
+
+<BaseLayout
+  title="Städtjänster i Trollhättan – hem, företag & fastighet"
+  description="Flyttstäd, hemstäd, storstäd, fönsterputsning och kontorsstäd i Trollhättan, Grästorp, Lysekil och Smögen. Även trappstädning och fastighetsservice."
+  breadcrumbs={[{ name: 'Tjänster', href: '/tjanster/' }]}
+>
+  <section class="section" style="padding-top:16px">
+    <div class="container">
+      <div class="section-head">
+        <h1>Våra tjänster</h1>
+        <p>Alla uppdrag får ett fast pris i offerten. Hemstäd, flyttstäd, storstäd och fönsterputsning ger RUT-avdrag.</p>
+      </div>
+      <ServiceList items={coreServices} />
+
+      <h2 class="sub">För BRF och fastighetsägare</h2>
+      <ServiceList items={extraServices} />
+    </div>
+  </section>
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .sub {
+    font-size: 1.25rem;
+    margin-top: 48px;
+    margin-bottom: 12px;
+  }
+</style>

@@ -1,0 +1,139 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { business } from '../data/business';
+import { services } from '../data/services';
+import { areas } from '../data/areas';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <Logo variant="light" />
+        <p>Städning och fastighetsservice för hem, företag och fastighetsägare i Trollhättan, Grästorp, Lysekil och Smögen.</p>
+        <ul class="footer__contact">
+          {business.phones.map((p) => (
+            <li><a href={p.href}><Icon name="phone" size={18} /> {p.display}</a></li>
+          ))}
+          <li><a href={`mailto:${business.email}`}><Icon name="mail" size={18} /> {business.email}</a></li>
+          <li><span><Icon name="clock" size={18} /> {business.openingHoursText}</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__h">Tjänster</h2>
+        <ul class="footer__links">
+          {services.map((s) => <li><a href={`/tjanster/${s.slug}/`}>{s.name}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__h">Områden</h2>
+        <ul class="footer__links">
+          {areas.map((a) => <li><a href={`/omraden/${a.slug}/`}>Städfirma {a.name}</a></li>)}
+        </ul>
+        <h2 class="footer__h">Företaget</h2>
+        <ul class="footer__links">
+          <li><a href="/foretag-och-brf/">Företag & BRF</a></li>
+          <li><a href="/om-oss/">Om oss</a></li>
+          <li><a href="/kontakt/">Kontakt</a></li>
+          <li><a href="/integritetspolicy/">Integritetspolicy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {year} {business.name}{business.orgNumber && ` · Org.nr ${business.orgNumber}`}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--navy-900);
+    color: #c9d6ea;
+    padding-block: 48px 24px;
+    font-size: 0.9875rem;
+  }
+  .footer a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    text-decoration: underline;
+  }
+  .footer__grid {
+    display: grid;
+    gap: 36px 20px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+  .footer__brand p {
+    margin-block: 16px;
+    max-width: 380px;
+  }
+  .footer__contact,
+  .footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .footer__contact a,
+  .footer__contact span {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .footer__links a {
+    display: inline-block;
+    padding-block: 7px;
+  }
+  .footer__h {
+    color: #fff;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+  .footer__links + .footer__h {
+    margin-top: 24px;
+  }
+  .footer__bottom {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    font-size: 0.875rem;
+  }
+  .footer__bottom p {
+    margin: 0;
+  }
+  @media (min-width: 640px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 960px) {
+    .footer {
+      padding-block: 72px 28px;
+    }
+    .footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: auto;
+    }
+  }
+</style>

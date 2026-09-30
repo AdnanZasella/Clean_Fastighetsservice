@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import ServiceList from '../components/ServiceList.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Faq from '../components/Faq.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { coreServices, extraServices } from '../data/services';
+import { areaNames } from '../data/areas';
+import { primaryPhone } from '../data/business';
+import { photos } from '../data/photos';
+import { faqSchema } from '../data/schema';
+
+const faq = [
+  {
+    q: 'Vilka orter kommer ni till?',
+    a: 'Trollhättan, Grästorp, Lysekil och Smögen. Vi tar gärna uppdrag i närliggande orter också, så hör av dig.',
+  },
+  {
+    q: 'Vad kostar det?',
+    a: 'Du får ett fast pris i offerten innan vi börjar. Som privatperson betalar du bara halva arbetskostnaden tack vare RUT-avdraget.',
+  },
+  {
+    q: 'Hur snabbt kan ni komma?',
+    a: 'Vi svarar inom 24 timmar och kan ofta börja inom några dagar. Brådskar det, ring oss.',
+  },
+];
+const hasHero = Boolean(photos.hero);
+---
+
+<BaseLayout
+  title="Städfirma i Trollhättan – Städning & Fastighetsservice"
+  description="Städfirma i Trollhättan, Grästorp, Lysekil och Smögen. Flyttstäd, hemstäd, storstäd, fönsterputsning och kontorsstäd med RUT-avdrag. Gratis offert inom 24 h."
+  schema={[faqSchema(faq)]}
+>
+  <section class:list={['hero', { 'hero--photo': hasHero }]}>
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <p class="hero__where">{areaNames.join(' · ')}</p>
+        <h1>Städning och fastighetsservice i Trollhättan</h1>
+        <p class="hero__lead">Flyttstäd, hemstäd, storstäd, fönsterputsning och kontorsstäd för hem och företag.</p>
+        <a class="btn btn--primary" href="/offert/">Få gratis offert <Icon name="arrow" /></a>
+        <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
+      </div>
+      {
+        hasHero && (
+          <div class="hero__photo">
+            <Photo name="hero" priority sizes="(min-width: 960px) 520px, 100vw" />
+          </div>
+        )
+      }
+    </div>
+    <svg class="hero__arc" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 100 C 360 0 1080 0 1440 100 Z" fill="#fff"></path>
+    </svg>
+  </section>
+
+  <section class="section">
+    <div class="container reveal">
+      <h2>Våra tjänster</h2>
+      <ServiceList items={coreServices} />
+      <p class="extra">
+        För BRF och fastighetsägare gör vi även{' '}
+        {extraServices.map((s, i) => (
+          <>
+            {i > 0 && ' och '}
+            <a href={`/tjanster/${s.slug}/`}>{s.name.toLowerCase()}</a>
+          </>
+        ))}.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container reveal">
+      <h2 class="visually-hidden">Därför väljer kunder oss</h2>
+      <TrustBar />
+    </div>
+  </section>
+
+  <section class="section b2b">
+    <div class="container reveal">
+      <h2>Hyresvärd, BRF eller företag?</h2>
+      <p>
+        Vi arbetar redan med hyresvärdar i Trollhättan. Vi tar trapphus, kontor och lägenheter mellan hyresgäster, med fast schema och en kontaktperson.
+      </p>
+      <a class="b2b__link" href="/foretag-och-brf/">Så jobbar vi med företag <Icon name="arrow" size={18} /></a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container reveal">
+      <h2>Vanliga frågor</h2>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container form-wrap reveal">
+      <h2>Få ett fast pris</h2>
+      <p class="form-lead">Kostnadsfritt, och du får svar inom 24 timmar.</p>
+      <QuoteForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    background: var(--navy-700);
+    color: #fff;
+    padding-block: 40px 88px;
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 32px;
+  }
+  .hero__where {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #b8c7de;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .hero__lead {
+    font-size: 1.125rem;
+    color: #d3dff0;
+    margin-bottom: 28px;
+    max-width: 520px;
+  }
+  .hero .call-link {
+    color: #fff;
+  }
+  .hero__photo :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+  }
+  .hero--photo {
+    padding-bottom: 64px;
+  }
+  .hero__arc {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 40px;
+  }
+
+  .extra {
+    margin: 20px 0 0;
+    color: var(--muted);
+  }
+  .extra a {
+    font-weight: 700;
+  }
+
+  .b2b {
+    background: var(--navy-700);
+    color: #fff;
+  }
+  .b2b h2 {
+    color: #fff;
+  }
+  .b2b p {
+    color: #d3dff0;
+    max-width: 600px;
+  }
+  .b2b__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-weight: 800;
+    color: var(--yellow);
+    text-decoration: none;
+  }
+  .b2b__link :global(svg) {
+    transition: transform 0.2s var(--ease);
+  }
+  .b2b__link:hover :global(svg) {
+    transform: translateX(4px);
+  }
+
+  .form-wrap {
+    max-width: 760px;
+  }
+  .form-lead {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  @media (min-width: 960px) {
+    .hero {
+      padding-block: 96px 150px;
+    }
+    .hero--photo .hero__inner {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: center;
+      gap: 64px;
+    }
+    .hero__arc {
+      height: 90px;
+    }
+  }
+</style>

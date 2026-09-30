@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { areas } from '../../data/areas';
+---
+
+<BaseLayout
+  title="Städfirma i Trollhättan, Grästorp, Lysekil & Smögen"
+  description="Vi utgår från Trollhättan och städar i Trollhättan, Grästorp, Lysekil, Smögen och närliggande orter. Se våra områden och begär gratis offert."
+  breadcrumbs={[{ name: 'Områden', href: '/omraden/' }]}
+>
+  <section class="section" style="padding-top:16px">
+    <div class="container">
+      <div class="section-head">
+        <h1>Här städar vi</h1>
+        <p>Vi utgår från Trollhättan. Bor du i en närliggande ort kommer vi gärna dit också.</p>
+      </div>
+      <ul class="alist">
+        {
+          areas.map((a) => (
+            <li>
+              <a href={`/omraden/${a.slug}/`}>
+                <span>
+                  <strong>{a.name}</strong>
+                  <small>även {a.nearby.join(', ')}</small>
+                </span>
+                <Icon name="arrow" size={20} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+  <CtaBand title="Finns inte din ort med?" text="Vi tar gärna uppdrag i närliggande orter. Berätta vad du behöver." />
+</BaseLayout>
+
+<style>
+  .alist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    max-width: 680px;
+  }
+  .alist li {
+    border-bottom: 1px solid var(--line);
+  }
+  .alist a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 4px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .alist strong {
+    display: block;
+    font-size: 1.1875rem;
+    color: var(--navy-900);
+  }
+  .alist small {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+  .alist a :global(svg) {
+    flex: none;
+    color: var(--navy-600);
+    transition: transform 0.2s var(--ease);
+  }
+  .alist a:hover :global(svg) {
+    transform: translateX(4px);
+  }
+</style>

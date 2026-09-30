@@ -1,0 +1,115 @@
+---
+import '@fontsource-variable/manrope/wght.css';
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyCallBar from '../components/StickyCallBar.astro';
+
+export interface Crumb {
+  name: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  schema?: Record<string, unknown>[];
+  breadcrumbs?: Crumb[];
+  hideCallbar?: boolean; // t.ex. på offertsidan där formuläret redan är i fokus
+}
+
+const { title, description, noindex, schema = [], breadcrumbs, hideCallbar = false } = Astro.props;
+
+const crumbSchema = breadcrumbs && {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [{ name: 'Hem', href: '/' }, ...breadcrumbs].map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    item: new URL(c.href, Astro.site).toString(),
+  })),
+};
+---
+
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1b3a6b" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <Seo title={title} description={description} noindex={noindex} schema={crumbSchema ? [...schema, crumbSchema] : schema} />
+  </head>
+  <body class:list={{ "no-callbar": hideCallbar }}>
+    <a class="skip-link" href="#main">Hoppa till innehåll</a>
+    <Header />
+    <main id="main">
+      {
+        breadcrumbs && (
+          <nav class="crumbs container" aria-label="Brödsmulor">
+            <ol>
+              <li><a href="/">Hem</a></li>
+              {breadcrumbs.map((c, i) =>
+                i === breadcrumbs.length - 1 ? (
+                  <li aria-current="page">{c.name}</li>
+                ) : (
+                  <li><a href={c.href}>{c.name}</a></li>
+                ),
+              )}
+            </ol>
+          </nav>
+        )
+      }
+      <slot />
+    </main>
+    <Footer />
+    {!hideCallbar && <StickyCallBar />}
+    <script>
+      // Sektioner tonas in mjukt när de scrollas fram
+      const els = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) =>
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("is-visible");
+                io.unobserve(e.target);
+              }
+            }),
+          { rootMargin: "0px 0px -8% 0px" },
+        );
+        els.forEach((el) => io.observe(el));
+      } else {
+        els.forEach((el) => el.classList.add("is-visible"));
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 14px 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--line);
+  }
+  .crumbs a {
+    color: var(--muted);
+  }
+</style>

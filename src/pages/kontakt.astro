@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { business } from '../data/business';
+import { areaNames } from '../data/areas';
+---
+
+<BaseLayout
+  title="Kontakt – ring eller mejla oss"
+  description={`Kontakta ${business.name} i Trollhättan. Ring ${business.phones[0].display} eller ${business.phones[1].display}, mejla oss eller begär offert via formuläret.`}
+  breadcrumbs={[{ name: 'Kontakt', href: '/kontakt/' }]}
+>
+  <section class="section" style="padding-top:16px">
+    <div class="container narrow">
+      <h1>Kontakta oss</h1>
+      <p class="lead">Snabbast når du oss på telefon.</p>
+
+      <ul class="contact">
+        {
+          business.phones.map((p) => (
+            <li>
+              <a href={p.href}>
+                <Icon name="phone" size={20} />
+                <strong>{p.display}</strong>
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={`mailto:${business.email}`}>
+            <Icon name="mail" size={20} />
+            <strong class="break">{business.email}</strong>
+          </a>
+        </li>
+      </ul>
+      <p class="meta">{business.openingHoursText} · {areaNames.join(', ')} med omnejd</p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container narrow">
+      <h2>Eller skicka en förfrågan</h2>
+      <p class="muted">Du får svar {business.responseTime}.</p>
+      <QuoteForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 760px;
+  }
+  .lead {
+    font-size: 1.125rem;
+    color: var(--muted);
+  }
+  .contact {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .contact li {
+    border-bottom: 1px solid var(--line);
+  }
+  .contact a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 64px;
+    color: var(--navy-900);
+    text-decoration: none;
+    font-size: 1.1875rem;
+  }
+  .contact a :global(svg) {
+    flex: none;
+    color: var(--navy-600);
+  }
+  .contact a:hover strong {
+    text-decoration: underline;
+  }
+  .break {
+    word-break: break-all;
+    font-size: 1.0625rem;
+  }
+  .meta {
+    margin: 20px 0 0;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+  .muted {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+</style>

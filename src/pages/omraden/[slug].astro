@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import ServiceList from '../../components/ServiceList.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
+import { areas, type Area } from '../../data/areas';
+import { coreServices, extraServices } from '../../data/services';
+import { primaryPhone } from '../../data/business';
+
+export function getStaticPaths() {
+  return areas.map((area) => ({ params: { slug: area.slug }, props: { area } }));
+}
+
+interface Props {
+  area: Area;
+}
+const { area } = Astro.props;
+const others = areas.filter((a) => a.slug !== area.slug);
+---
+
+<BaseLayout
+  title={`Städfirma i ${area.name} – flyttstäd, hemstäd & fönsterputs`}
+  description={`Letar du städfirma i ${area.name}? Vi erbjuder flyttstäd, hemstäd, storstäd, fönsterputsning och kontorsstäd i ${area.name} med omnejd. RUT-avdrag och gratis offert.`}
+  breadcrumbs={[
+    { name: 'Områden', href: '/omraden/' },
+    { name: area.name, href: `/omraden/${area.slug}/` },
+  ]}
+>
+  <section class="section" style="padding-top:16px">
+    <div class="container intro">
+      <h1>Städfirma i {area.name}</h1>
+      <p class="lead">{area.intro}</p>
+      <a class="btn btn--primary" href="#offert">Få gratis offert <Icon name="arrow" /></a>
+      <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
+      <p class="nearby">Vi kommer även till {area.nearby.join(', ')} och andra orter i närheten.</p>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container">
+      <TrustBar />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container reveal">
+      <h2>Våra tjänster i {area.name}</h2>
+      <ServiceList items={[...coreServices, ...extraServices]} />
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container narrow reveal">
+      <h2>Offert på städning i {area.name}</h2>
+      <p class="muted">Kostnadsfritt, och du får svar inom 24 timmar.</p>
+      <QuoteForm area={area.name} />
+    </div>
+  </section>
+
+  <nav class="section others" aria-label="Andra orter">
+    <div class="container">
+      <p>Vi städar även i
+        {others.map((a, i) => (
+          <>
+            {i > 0 && (i === others.length - 1 ? ' och ' : ', ')}
+            <a href={`/omraden/${a.slug}/`}>{a.name}</a>
+          </>
+        ))}.
+      </p>
+    </div>
+  </nav>
+</BaseLayout>
+
+<style>
+  .intro > * {
+    max-width: 680px;
+  }
+  .intro h1 {
+    font-size: clamp(1.875rem, 8vw, 3rem);
+  }
+  .lead {
+    font-size: 1.125rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .nearby {
+    margin: 20px 0 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+  .narrow {
+    max-width: 760px;
+  }
+  .muted {
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .others {
+    padding-block: 32px;
+  }
+  .others p {
+    margin: 0;
+    color: var(--muted);
+  }
+  .others a {
+    font-weight: 700;
+  }
+</style>

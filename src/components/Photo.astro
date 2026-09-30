@@ -1,0 +1,30 @@
+---
+import { Picture } from 'astro:assets';
+import { photos, photoFocus, photoAlt } from '../data/photos';
+
+interface Props {
+  name: string;
+  alt?: string;
+  sizes?: string;
+  priority?: boolean; // true för bilden högst upp (snabbare LCP)
+  class?: string;
+}
+const { name, alt = photoAlt[name] ?? '', sizes = '(min-width: 960px) 560px, 100vw', priority = false, class: className } = Astro.props;
+const src = photos[name];
+---
+
+{
+  src && (
+    <Picture
+      src={src}
+      alt={alt}
+      formats={['avif', 'webp']}
+      widths={[400, 640, 960, 1280]}
+      sizes={sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      class={className}
+      style={photoFocus[name] ? `object-position: ${photoFocus[name]}` : undefined}
+    />
+  )
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /tack/
+
+# TODO: uppdatera domänen när den är köpt
+Sitemap: https://ei-service.netlify.app/sitemap-index.xml

@@ -1,0 +1,70 @@
+---
+// FAQ med <details> (fungerar utan JS). Schema.org FAQPage läggs in av sidan via faqSchema().
+import type { Faq } from '../data/services';
+
+interface Props {
+  items: Faq[];
+}
+const { items } = Astro.props;
+---
+
+<div class="faq">
+  {
+    items.map((item, i) => (
+      <details open={i === 0}>
+        <summary>{item.q}</summary>
+        <p>{item.a}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    display: grid;
+    gap: 10px;
+    max-width: 800px;
+  }
+  details {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  summary {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    font-weight: 800;
+    color: var(--navy-900);
+    cursor: pointer;
+    min-height: 56px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--navy-50);
+    color: var(--navy-700);
+    font-size: 1.25rem;
+    font-weight: 700;
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after {
+    transform: rotate(45deg);
+  }
+  details p {
+    margin: 0;
+    padding: 0 18px 18px;
+    color: var(--muted);
+  }
+</style>
