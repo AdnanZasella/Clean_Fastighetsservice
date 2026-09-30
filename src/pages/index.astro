@@ -35,6 +35,7 @@ const hasHero = Boolean(photos.hero);
   schema={[faqSchema(faq)]}
 >
   <section class:list={['hero', { 'hero--photo': hasHero }]}>
+    {hasHero && <Photo name="hero" priority sizes="100vw" widths={[640, 960, 1280, 1920]} class="hero__bg" />}
     <div class="container hero__inner">
       <div class="hero__copy">
         <p class="hero__where">{areaNames.join(' · ')}</p>
@@ -43,13 +44,6 @@ const hasHero = Boolean(photos.hero);
         <a class="btn btn--primary" href="/offert/">Få gratis offert <Icon name="arrow" /></a>
         <a class="call-link" href={primaryPhone.href}>eller ring {primaryPhone.display}</a>
       </div>
-      {
-        hasHero && (
-          <div class="hero__photo">
-            <Photo name="hero" priority sizes="(min-width: 960px) 520px, 100vw" />
-          </div>
-        )
-      }
     </div>
     <svg class="hero__arc" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0 100 C 360 0 1080 0 1440 100 Z" fill="#fff"></path>
@@ -114,7 +108,7 @@ const hasHero = Boolean(photos.hero);
   }
   .hero__inner {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: grid;
     gap: 32px;
   }
@@ -137,15 +131,37 @@ const hasHero = Boolean(photos.hero);
   .hero .call-link {
     color: #fff;
   }
-  .hero__photo :global(img) {
+  /* Bakgrundsbild med marinblå toning så att texten alltid är läsbar */
+  /* Mobil: bilden i nedre halvan så att handsken syns under knappen */
+  .hero :global(.hero__bg) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
+    height: 52%;
     object-fit: cover;
-    border-radius: var(--radius-lg);
+    z-index: 0;
+  }
+  .hero--photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      var(--navy-700) 0%,
+      var(--navy-700) 48%,
+      rgb(27 58 107 / 0.55) 60%,
+      rgb(27 58 107 / 0.1) 78%,
+      rgb(27 58 107 / 0) 100%
+    );
   }
   .hero--photo {
-    padding-bottom: 64px;
+    padding-bottom: 250px;
+  }
+  .hero__arc {
+    z-index: 2;
   }
   .hero__arc {
     position: absolute;
@@ -202,10 +218,23 @@ const hasHero = Boolean(photos.hero);
     .hero {
       padding-block: 96px 150px;
     }
-    .hero--photo .hero__inner {
-      grid-template-columns: 1.1fr 1fr;
-      align-items: center;
-      gap: 64px;
+    .hero--photo {
+      padding-block: 120px 190px;
+    }
+    .hero :global(.hero__bg) {
+      height: 100%;
+    }
+    .hero--photo::before {
+      background: linear-gradient(
+        90deg,
+        rgb(13 33 68 / 0.96) 0%,
+        rgb(13 33 68 / 0.88) 38%,
+        rgb(13 33 68 / 0.35) 62%,
+        rgb(13 33 68 / 0) 80%
+      );
+    }
+    .hero__copy {
+      max-width: 580px;
     }
     .hero__arc {
       height: 90px;

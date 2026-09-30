@@ -8,8 +8,9 @@ interface Props {
   sizes?: string;
   priority?: boolean; // true för bilden högst upp (snabbare LCP)
   class?: string;
+  widths?: number[];
 }
-const { name, alt = photoAlt[name] ?? '', sizes = '(min-width: 960px) 560px, 100vw', priority = false, class: className } = Astro.props;
+const { name, alt = photoAlt[name] ?? '', sizes = '(min-width: 960px) 560px, 100vw', priority = false, class: className, widths = [400, 640, 960, 1280] } = Astro.props;
 const src = photos[name];
 ---
 
@@ -19,7 +20,7 @@ const src = photos[name];
       src={src}
       alt={alt}
       formats={['avif', 'webp']}
-      widths={[400, 640, 960, 1280]}
+      widths={widths}
       sizes={sizes}
       loading={priority ? 'eager' : 'lazy'}
       fetchpriority={priority ? 'high' : 'auto'}
